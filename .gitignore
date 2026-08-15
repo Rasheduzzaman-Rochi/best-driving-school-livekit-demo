@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+.env.local
+backend/.env
+livekit-agent/.env
+livekit-agent/.env.local
+
+# Python virtual environments
+.venv/
+backend/.venv/
+livekit-agent/.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
