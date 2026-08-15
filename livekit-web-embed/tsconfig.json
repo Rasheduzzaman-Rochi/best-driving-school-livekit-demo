@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "app/test/popup",
+    "components/embed-popup",
+    "components/popup-page.tsx",
+    "components/popup-page-dynamic.tsx",
+    "components/welcome.tsx",
+    "components/welcome-dynamic.tsx",
+    "hooks/use-agent-control-bar.ts",
+    "hooks/use-connection-details.ts",
+    "hooks/useDebug.ts",
+    "webpack.config.js"
+  ]
+}

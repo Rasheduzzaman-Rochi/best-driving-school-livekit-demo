@@ -1,26 +1,27 @@
-document.querySelectorAll(".example-prompts button").forEach((button) => {
-  button.addEventListener("click", () => {
-    document.querySelector("vapi-widget")?.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
-  });
-});
-
 document.addEventListener("DOMContentLoaded", () => {
-  const widget = document.querySelector("vapi-widget");
+  const assistantFrame = document.querySelector("#ava-voice-assistant");
+  const frameError = document.querySelector(".ava-embed-error");
+  const configuredUrl = window.BDS_CONFIG?.avaEmbedUrl;
 
-  if (!widget) return;
+  if (assistantFrame) {
+    try {
+      const embedUrl = new URL(configuredUrl);
+      if (!["http:", "https:"].includes(embedUrl.protocol)) {
+        throw new Error("Unsupported embed URL protocol");
+      }
+      assistantFrame.src = embedUrl.toString();
+    } catch {
+      assistantFrame.hidden = true;
+      if (frameError) frameError.hidden = false;
+    }
+  }
 
-  widget.addEventListener("call-start", () => {
-    console.log("Ava voice conversation started");
-  });
-
-  widget.addEventListener("call-end", () => {
-    console.log("Ava voice conversation ended");
-  });
-
-  widget.addEventListener("error", (event) => {
-    console.error("Vapi widget error:", event.detail);
+  document.querySelectorAll(".example-prompts button").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelector(".voice-widget-card")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
   });
 });

@@ -7,6 +7,7 @@
 # Environment / secrets
 .env
 .env.local
+**/.env.local
 backend/.env
 livekit-agent/.env
 livekit-agent/.env.local
@@ -15,6 +16,16 @@ livekit-agent/.env.local
 .venv/
 backend/.venv/
 livekit-agent/.venv/
+
+# Frontend dependencies and build output
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+dist/
+**/dist/
+build/
+**/build/
 
 # Python cache
 __pycache__/

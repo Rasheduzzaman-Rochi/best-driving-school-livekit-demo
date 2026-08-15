@@ -653,17 +653,14 @@
 
 
 
-          <!-- =============================================
-               LIVEKIT WIDGET START
-          ============================================== -->
-
-          <script src="https://cloud.livekit.io/embed-popup.js" data-lk-agent="CA_5WvZV87JcjzU"
-            data-lk-logo="https://p1.hiclipart.com/preview/464/451/638/call-logo-call-centre-customer-support-customer-service-centre-dassistance-call-centre-agent-headphones-white-png-clipart.jpg" data-lk-color="#147c74"
-            data-lk-theme="light"></script>
-
-          <!-- =============================================
-               LIVEKIT WIDGET END
-          ============================================== -->
+          <div class="ava-embed-shell">
+            <iframe id="ava-voice-assistant" class="ava-embed"
+              title="Talk to Ava, Best Driving School AI receptionist" allow="microphone; autoplay"
+              loading="eager"></iframe>
+            <p class="ava-embed-error" role="alert" hidden>
+              The Ava voice assistant is not configured yet.
+            </p>
+          </div>
 
 
 
@@ -1004,7 +1001,8 @@
        WEBSITE JAVASCRIPT
   ====================================================== -->
 
-  <script src="/script.js?v=20260813-4"></script>
+  <script src="/config.js?v=20260815-1"></script>
+  <script src="/script.js?v=20260815-1"></script>
 
 </body>
 
