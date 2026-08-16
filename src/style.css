@@ -90,7 +90,7 @@ body {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.25fr 0.75fr;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 420px);
   align-items: center;
   gap: 70px;
 }
@@ -162,11 +162,17 @@ body {
 }
 
 .assistant-card {
-  padding: 38px;
+  width: 100%;
+  max-width: 420px;
+  min-height: 500px;
+  justify-self: end;
+  padding: 24px 18px 18px;
+  overflow: hidden;
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 24px;
   box-shadow: 0 30px 60px rgba(15, 23, 42, 0.1);
+  scroll-margin-top: 100px;
   text-align: center;
 }
 
@@ -333,6 +339,45 @@ body {
   overflow: hidden;
 }
 
+.talk-cta-card {
+  display: flex;
+  min-height: 320px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.talk-cta-icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 26px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(20, 124, 116, 0.2);
+}
+
+.talk-cta-card h3 {
+  font-size: 25px;
+}
+
+.talk-cta-card > p {
+  max-width: 360px;
+  color: var(--muted);
+}
+
+.talk-cta-link {
+  display: inline-flex;
+  margin-top: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
 .voice-heading {
   display: flex;
   justify-content: space-between;
@@ -357,6 +402,10 @@ body {
   position: relative;
   width: 100%;
   min-height: 420px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: transparent;
 }
 
 .ava-embed {
@@ -365,17 +414,52 @@ body {
   height: 420px;
   border: 0;
   overflow: hidden;
-  background: #ffffff;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.ava-embed.is-loaded {
+  opacity: 1;
+}
+
+.ava-embed[hidden] {
+  display: none;
+}
+
+.ava-embed-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  z-index: 1;
+  place-content: center;
+  gap: 5px;
+  background: var(--white);
+  color: var(--muted);
+  text-align: center;
+}
+
+.ava-embed-loading strong {
+  color: var(--dark);
+  font-size: 24px;
+}
+
+.ava-embed-loading span {
+  font-size: 14px;
+}
+
+.ava-embed-loading[hidden] {
+  display: none;
 }
 
 .ava-embed-error {
+  position: absolute;
+  inset: 0;
   display: grid;
-  min-height: 220px;
+  min-height: 100%;
   place-items: center;
   padding: 24px;
-  border: 1px solid #fecaca;
-  border-radius: 14px;
-  background: #fff7f7;
+  background: var(--white);
   color: #991b1b !important;
   text-align: center;
 }
@@ -440,6 +524,15 @@ footer p {
     padding: 70px 0;
   }
 
+  .hero-grid {
+    gap: 48px;
+  }
+
+  .assistant-card {
+    width: min(100%, 430px);
+    justify-self: center;
+  }
+
   .ava-embed-shell,
   .ava-embed {
     min-height: 440px;
@@ -467,6 +560,11 @@ footer p {
 
   .hero h1 {
     font-size: 42px;
+  }
+
+  .assistant-card {
+    min-height: 515px;
+    padding: 22px 10px 16px;
   }
 
   .voice-widget-card {

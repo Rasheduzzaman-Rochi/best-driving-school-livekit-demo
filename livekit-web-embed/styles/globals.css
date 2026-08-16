@@ -245,7 +245,7 @@
   padding: 18px 18px 14px;
   overflow: hidden;
   color: var(--ava-ink);
-  background: #ffffff;
+  background: transparent;
   text-align: center;
 }
 

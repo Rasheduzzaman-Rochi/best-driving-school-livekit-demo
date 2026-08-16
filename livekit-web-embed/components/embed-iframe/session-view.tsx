@@ -179,7 +179,7 @@ export function SessionView({ appConfig }: SessionViewProps) {
         A
       </div>
       <h1>Ava</h1>
-      <p className="ava-role">AI Receptionist {sessionStarted ? 'Connected' : 'Ready'}</p>
+      <p className="ava-role">Best Driving School AI Receptionist</p>
 
       <div className="ava-visualizer" aria-hidden="true">
         <BarVisualizer

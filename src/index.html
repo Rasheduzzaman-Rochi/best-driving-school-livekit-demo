@@ -12,7 +12,7 @@
     content="Best Driving School AI voice receptionist powered by livekit with live lesson availability, booking, and admin management." />
 
   <!-- Main Website CSS -->
-  <link rel="stylesheet" href="/style.css?v=20260813-4" />
+  <link rel="stylesheet" href="/style.css?v=20260816-1" />
 
   <!--
     Critical header styles are included here so that
@@ -236,7 +236,7 @@
 
           <div class="hero-actions">
 
-            <a href="#talk" class="primary-btn">
+            <a href="#ava-assistant" class="primary-btn">
               Talk to Ava
             </a>
 
@@ -268,7 +268,7 @@
 
 
         <!-- Assistant Card -->
-        <div class="assistant-card">
+        <div id="ava-assistant" class="assistant-card">
 
           <div class="status">
 
@@ -279,61 +279,17 @@
           </div>
 
 
-          <div class="avatar">
-            A
-          </div>
-
-
-          <h3>
-            Ava
-          </h3>
-
-
-          <p>
-            Best Driving School AI Receptionist
-          </p>
-
-
-          <div class="assistant-features">
-
-            <div>
-
-              <strong>
-                24/7
-              </strong>
-
-              <span>
-                AI Assistance
-              </span>
-
+          <div class="ava-embed-shell" aria-busy="true">
+            <div class="ava-embed-loading" role="status" aria-live="polite">
+              <strong>Ava</strong>
+              <span>Loading voice assistant...</span>
             </div>
-
-
-            <div>
-
-              <strong>
-                Voice
-              </strong>
-
-              <span>
-                Conversation
-              </span>
-
-            </div>
-
-
-            <div>
-
-              <strong>
-                Live
-              </strong>
-
-              <span>
-                Booking System
-              </span>
-
-            </div>
-
+            <iframe id="ava-voice-assistant" class="ava-embed"
+              title="Talk to Ava - Best Driving School AI Assistant" allow="microphone; autoplay"
+              loading="eager" scrolling="no"></iframe>
+            <p class="ava-embed-error" role="alert" hidden>
+              Ava is temporarily unavailable. Please try again.
+            </p>
           </div>
 
         </div>
@@ -620,12 +576,12 @@
 
 
             <button type="button">
-              “I want to book an adult driving lesson.”
+              “I don't know which driving program I need.”
             </button>
 
 
             <button type="button">
-              “I need road test preparation.”
+              “I want to book an adult driving lesson.”
             </button>
 
           </div>
@@ -634,35 +590,22 @@
 
 
 
-        <!-- Voice Widget -->
-        <div class="voice-widget-card">
+        <!-- Hero Assistant CTA -->
+        <div class="voice-widget-card talk-cta-card">
 
+          <span class="talk-cta-icon" aria-hidden="true">A</span>
 
-          <div class="voice-heading">
+          <h3>
+            Ready to talk with Ava?
+          </h3>
 
-            <span>
-              Voice Assistant
-            </span>
+          <p>
+            The live voice assistant is available in the main Ava card above.
+          </p>
 
-
-            <small>
-              Microphone access required
-            </small>
-
-          </div>
-
-
-
-          <div class="ava-embed-shell">
-            <iframe id="ava-voice-assistant" class="ava-embed"
-              title="Talk to Ava, Best Driving School AI receptionist" allow="microphone; autoplay"
-              loading="eager"></iframe>
-            <p class="ava-embed-error" role="alert" hidden>
-              The Ava voice assistant is not configured yet.
-            </p>
-          </div>
-
-
+          <a href="#ava-assistant" class="primary-btn talk-cta-link">
+            Go to Ava Assistant
+          </a>
 
           <p class="privacy-note">
             This is an AI demonstration.
@@ -1001,8 +944,8 @@
        WEBSITE JAVASCRIPT
   ====================================================== -->
 
-  <script src="/config.js?v=20260815-1"></script>
-  <script src="/script.js?v=20260815-1"></script>
+  <script src="/config.js?v=20260816-1"></script>
+  <script src="/script.js?v=20260816-1"></script>
 
 </body>
 
