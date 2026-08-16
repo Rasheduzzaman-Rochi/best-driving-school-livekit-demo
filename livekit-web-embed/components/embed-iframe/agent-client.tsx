@@ -8,6 +8,8 @@ import { SessionView } from './session-view';
 
 setLogLevel(LogLevel.warn);
 
+const AGENT_READY_TIMEOUT_MILLISECONDS = 30_000;
+
 interface AppProps {
   appConfig: AppConfig;
 }
@@ -16,7 +18,7 @@ function EmbedAgentClient({ appConfig }: AppProps) {
   const tokenSource = useMemo(() => TokenSource.endpoint('/api/connection-details'), []);
   const session = useSession(tokenSource, {
     agentName: 'livekit-agent',
-    agentConnectTimeoutMilliseconds: 20_000,
+    agentConnectTimeoutMilliseconds: AGENT_READY_TIMEOUT_MILLISECONDS,
   });
 
   return (
