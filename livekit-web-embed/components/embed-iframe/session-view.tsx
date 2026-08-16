@@ -43,6 +43,17 @@ function friendlyConnectionError(error: unknown): string {
   return "We couldn't connect to Ava. Please try again.";
 }
 
+function connectionErrorCategory(error: unknown): string {
+  const failure = MediaDeviceFailure.getFailure(error);
+  if (failure === MediaDeviceFailure.PermissionDenied) return 'MIC_PERMISSION_DENIED';
+  if (failure === MediaDeviceFailure.NotFound) return 'MIC_NOT_FOUND';
+  if (failure === MediaDeviceFailure.DeviceInUse) return 'MIC_DEVICE_IN_USE';
+  if (error instanceof Error && error.message.includes('Error generating token from endpoint')) {
+    return 'TOKEN_REQUEST_HTTP_ERROR';
+  }
+  return 'SESSION_CONNECT_FAILED';
+}
+
 export function SessionView({ appConfig }: SessionViewProps) {
   const session = useSessionContext();
   const agent = useAgent(session);
@@ -52,11 +63,14 @@ export function SessionView({ appConfig }: SessionViewProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const connectedOnce = useRef(false);
   const endingIntentionally = useRef(false);
+  const startInProgress = useRef(false);
 
   const resetSession = useCallback(async () => {
     endingIntentionally.current = true;
     try {
       await session.end();
+    } catch (error) {
+      console.error(`SESSION_END_FAILED | category=${connectionErrorCategory(error)}`);
     } finally {
       setSessionStarted(false);
       setPendingAction(null);
@@ -66,10 +80,14 @@ export function SessionView({ appConfig }: SessionViewProps) {
   }, [session]);
 
   const startConversation = useCallback(async () => {
+    if (startInProgress.current) return;
+    startInProgress.current = true;
     setErrorMessage(null);
     setSessionStarted(true);
     setPendingAction('start');
     endingIntentionally.current = false;
+    console.info('SESSION_STARTING');
+    console.info('AGENT_WAITING | agent=livekit-agent');
 
     try {
       await session.room.startAudio();
@@ -84,11 +102,15 @@ export function SessionView({ appConfig }: SessionViewProps) {
         },
       });
       connectedOnce.current = true;
+      console.info('SESSION_CONNECTED');
+      console.info('AGENT_CONNECTED | agent=livekit-agent');
     } catch (error) {
-      console.error('Ava session failed to start.', error);
+      const category = connectionErrorCategory(error);
+      console.error(`SESSION_CONNECT_FAILED | category=${category}`);
       setErrorMessage(friendlyConnectionError(error));
       await resetSession();
     } finally {
+      startInProgress.current = false;
       setPendingAction(null);
     }
   }, [appConfig.isPreConnectBufferEnabled, resetSession, session]);
@@ -98,7 +120,7 @@ export function SessionView({ appConfig }: SessionViewProps) {
     try {
       await session.room.localParticipant.setMicrophoneEnabled(!isMicrophoneEnabled);
     } catch (error) {
-      console.error('Unable to change microphone state.', error);
+      console.error(`MICROPHONE_UPDATE_FAILED | category=${connectionErrorCategory(error)}`);
       setErrorMessage('Unable to change the microphone. Please try again.');
     } finally {
       setPendingAction(null);
@@ -122,6 +144,7 @@ export function SessionView({ appConfig }: SessionViewProps) {
       session.connectionState === ConnectionState.Disconnected &&
       !endingIntentionally.current
     ) {
+      console.error('SESSION_CONNECT_FAILED | category=UNEXPECTED_DISCONNECT');
       setErrorMessage('The connection to Ava ended unexpectedly. Please try again.');
       setSessionStarted(false);
       connectedOnce.current = false;
@@ -130,6 +153,7 @@ export function SessionView({ appConfig }: SessionViewProps) {
 
   useEffect(() => {
     if (sessionStarted && agent.state === 'failed') {
+      console.error('SESSION_CONNECT_FAILED | category=AGENT_CONNECTION_FAILED');
       setErrorMessage("We couldn't connect to Ava. Please try again.");
       void resetSession();
     }

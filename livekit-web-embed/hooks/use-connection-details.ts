@@ -19,10 +19,7 @@ export default function useConnectionDetails(appConfig: AppConfig) {
 
   const fetchConnectionDetails = useCallback(async () => {
     setConnectionDetails(null);
-    const url = new URL(
-      process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT ?? '/api/connection-details',
-      window.location.origin
-    );
+    const url = new URL('/api/connection-details', window.location.origin);
 
     let data: ConnectionDetails;
     try {

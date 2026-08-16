@@ -1,5 +1,4 @@
-// Public runtime configuration. Replace this URL with the HTTPS Dokploy
-// domain for livekit-web-embed, keeping the official /embed route.
+// Public runtime configuration for the production LiveKit Web Embed app.
 window.BDS_CONFIG = Object.freeze({
-  avaEmbedUrl: "http://localhost:3000/embed"
+  avaEmbedUrl: "https://internrasheduzzamanvoiceagents-livekitwe-4f6b33-206-189-183-167.sslip.io/embed"
 });
