@@ -174,6 +174,7 @@ body {
   box-shadow: 0 30px 60px rgba(15, 23, 42, 0.1);
   scroll-margin-top: 100px;
   text-align: center;
+  transform: translateX(30px);
 }
 
 .status {
@@ -531,6 +532,7 @@ footer p {
   .assistant-card {
     width: min(100%, 430px);
     justify-self: center;
+    transform: none;
   }
 
   .ava-embed-shell,

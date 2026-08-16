@@ -12,7 +12,26 @@ const logoutButton =
 const refreshButton =
   document.getElementById("refreshButton");
 
+const dashboardMessage =
+  document.getElementById("dashboardMessage");
+
+const deleteBookingModal =
+  document.getElementById("deleteBookingModal");
+
+const deleteBookingMessage =
+  document.getElementById("deleteBookingMessage");
+
+const keepBookingButton =
+  document.getElementById("keepBookingButton");
+
+const confirmDeleteButton =
+  document.getElementById("confirmDeleteButton");
+
 let currentBookings = [];
+let pendingDeleteBookingId = null;
+let deleteInProgress = false;
+let deleteTriggerElement = null;
+let dashboardMessageTimeout = null;
 
 initializeDashboard();
 
@@ -147,18 +166,30 @@ function renderBookings() {
             </td>
 
             <td>
-              ${
-                booking.status === "confirmed"
-                  ? `
-                    <button
-                      class="cancel-booking-btn"
-                      onclick="cancelBooking('${booking.id}')"
-                    >
-                      Cancel
-                    </button>
-                  `
-                  : "—"
-              }
+              <div class="booking-actions">
+                ${
+                  booking.status === "confirmed"
+                    ? `
+                      <button
+                        type="button"
+                        class="cancel-booking-btn"
+                        onclick="cancelBooking('${escapeHtml(booking.id)}')"
+                      >
+                        Cancel
+                      </button>
+                    `
+                    : ""
+                }
+
+                <button
+                  type="button"
+                  class="delete-booking-btn"
+                  data-booking-id="${escapeHtml(booking.id)}"
+                  aria-label="Delete booking for ${escapeHtml(booking.customer_name)}"
+                >
+                  Delete
+                </button>
+              </div>
             </td>
 
           </tr>
@@ -226,6 +257,117 @@ async function cancelBooking(bookingId) {
   await loadBookings();
 }
 
+function openDeleteBookingModal(bookingId, triggerElement) {
+  const booking = currentBookings.find(
+    item => String(item.id) === String(bookingId)
+  );
+
+  if (!booking || deleteInProgress) {
+    return;
+  }
+
+  pendingDeleteBookingId = booking.id;
+  deleteTriggerElement = triggerElement;
+
+  deleteBookingMessage.textContent =
+    `This will permanently delete the booking for ${booking.customer_name} ` +
+    `on ${formatLongDate(booking.booking_date)} from ` +
+    `${formatTime(booking.start_time)} to ${formatTime(booking.end_time)}. ` +
+    "This action cannot be undone.";
+
+  deleteBookingModal.hidden = false;
+  document.body.classList.add("modal-open");
+  keepBookingButton.focus();
+}
+
+function closeDeleteBookingModal({ restoreFocus = true } = {}) {
+  if (deleteInProgress) {
+    return;
+  }
+
+  deleteBookingModal.hidden = true;
+  document.body.classList.remove("modal-open");
+  pendingDeleteBookingId = null;
+  deleteBookingMessage.textContent = "";
+
+  if (restoreFocus && deleteTriggerElement?.isConnected) {
+    deleteTriggerElement.focus();
+  }
+
+  deleteTriggerElement = null;
+}
+
+async function deleteBookingPermanently() {
+  if (!pendingDeleteBookingId || deleteInProgress) {
+    return;
+  }
+
+  const bookingId = pendingDeleteBookingId;
+  deleteInProgress = true;
+  confirmDeleteButton.disabled = true;
+  keepBookingButton.disabled = true;
+  confirmDeleteButton.textContent = "Deleting...";
+
+  try {
+    const { error, count } = await supabaseClient
+      .from("bookings")
+      .delete({ count: "exact" })
+      .eq("id", bookingId);
+
+    if (error || count !== 1) {
+      console.error("BOOKING_DELETE_FAILED", {
+        code: error?.code || "ROW_NOT_DELETED",
+        status: error?.status || null,
+        message: error?.message || "Delete affected no booking row"
+      });
+
+      showDashboardMessage(
+        "Unable to delete this booking. Please try again.",
+        "error"
+      );
+
+      return;
+    }
+
+    deleteInProgress = false;
+    closeDeleteBookingModal({ restoreFocus: false });
+
+    currentBookings = currentBookings.filter(
+      booking => String(booking.id) !== String(bookingId)
+    );
+
+    renderBookings();
+    updateStats();
+    showDashboardMessage("Booking deleted.", "success");
+    refreshButton.focus();
+  } catch (error) {
+    console.error("BOOKING_DELETE_FAILED", {
+      category: error instanceof Error ? error.name : "UnknownError"
+    });
+
+    showDashboardMessage(
+      "Unable to delete this booking. Please try again.",
+      "error"
+    );
+  } finally {
+    deleteInProgress = false;
+    confirmDeleteButton.disabled = false;
+    keepBookingButton.disabled = false;
+    confirmDeleteButton.textContent = "Delete Permanently";
+  }
+}
+
+function showDashboardMessage(message, type) {
+  window.clearTimeout(dashboardMessageTimeout);
+  dashboardMessage.textContent = message;
+  dashboardMessage.className = `dashboard-message ${type}`;
+  dashboardMessage.hidden = false;
+
+  dashboardMessageTimeout = window.setTimeout(() => {
+    dashboardMessage.hidden = true;
+  }, 5000);
+}
+
 refreshButton.addEventListener(
   "click",
   loadBookings
@@ -241,6 +383,62 @@ logoutButton.addEventListener(
   }
 );
 
+bookingTableBody.addEventListener("click", event => {
+  const deleteButton = event.target.closest(".delete-booking-btn");
+
+  if (!deleteButton) {
+    return;
+  }
+
+  openDeleteBookingModal(
+    deleteButton.dataset.bookingId,
+    deleteButton
+  );
+});
+
+keepBookingButton.addEventListener("click", () => {
+  closeDeleteBookingModal();
+});
+
+confirmDeleteButton.addEventListener(
+  "click",
+  deleteBookingPermanently
+);
+
+deleteBookingModal.addEventListener("click", event => {
+  if (event.target === deleteBookingModal) {
+    closeDeleteBookingModal();
+  }
+});
+
+deleteBookingModal.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeDeleteBookingModal();
+    return;
+  }
+
+  if (event.key !== "Tab") {
+    return;
+  }
+
+  const focusableElements = [
+    keepBookingButton,
+    confirmDeleteButton
+  ].filter(element => !element.disabled);
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  if (event.shiftKey && document.activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+  } else if (!event.shiftKey && document.activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+});
+
 function redirectToLogin() {
   window.location.href = "/admin/login/";
 }
@@ -253,6 +451,20 @@ function formatDate(dateString) {
     "en-US",
     {
       month: "short",
+      day: "numeric",
+      year: "numeric"
+    }
+  );
+}
+
+function formatLongDate(dateString) {
+  const date =
+    new Date(`${dateString}T00:00:00`);
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      month: "long",
       day: "numeric",
       year: "numeric"
     }

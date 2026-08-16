@@ -88,6 +88,12 @@ button {
   cursor: pointer;
 }
 
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(20, 124, 116, 0.3);
+  outline-offset: 3px;
+}
+
 a {
   color: inherit;
 }
@@ -1166,6 +1172,205 @@ a {
 
 
 /* =========================================================
+   BOOKING ACTIONS / DELETE
+========================================================= */
+
+.booking-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+
+.delete-booking-btn,
+.delete-permanently-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+
+  background: var(--danger);
+  color: var(--white);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.delete-booking-btn {
+  min-height: 34px;
+  padding: 7px 11px;
+}
+
+
+.delete-booking-btn:hover,
+.delete-permanently-btn:hover {
+  background: var(--danger-dark);
+  border-color: var(--danger-dark);
+  transform: translateY(-1px);
+}
+
+
+.delete-booking-btn:focus-visible,
+.delete-permanently-btn:focus-visible {
+  outline-color: rgba(180, 35, 24, 0.32);
+}
+
+
+.delete-booking-btn:disabled,
+.delete-permanently-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   DASHBOARD MESSAGE
+========================================================= */
+
+.dashboard-message {
+  position: fixed;
+  z-index: 120;
+  top: 24px;
+  right: 24px;
+
+  max-width: min(390px, calc(100vw - 32px));
+  padding: 12px 16px;
+
+  border: 1px solid;
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  box-shadow: var(--shadow-md);
+}
+
+
+.dashboard-message.success {
+  border-color: #86d3a4;
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+
+.dashboard-message.error {
+  border-color: #f0aaa5;
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+
+.dashboard-message[hidden] {
+  display: none;
+}
+
+
+/* =========================================================
+   DELETE CONFIRMATION MODAL
+========================================================= */
+
+body.modal-open {
+  overflow: hidden;
+}
+
+
+.modal-backdrop {
+  position: fixed;
+  z-index: 110;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background: rgba(16, 24, 40, 0.62);
+  backdrop-filter: blur(3px);
+}
+
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+
+.confirmation-modal {
+  width: min(100%, 500px);
+  padding: 28px;
+
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  background: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+
+.confirmation-modal:focus {
+  outline: none;
+}
+
+
+.confirmation-modal-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 18px;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: var(--danger-bg);
+  color: var(--danger);
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+
+.confirmation-modal h2 {
+  color: var(--dark);
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+
+.confirmation-modal p {
+  margin-top: 12px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+
+.confirmation-modal-actions {
+  display: flex;
+  margin-top: 26px;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+
+.delete-permanently-btn {
+  min-height: 40px;
+  padding: 9px 15px;
+  font-size: 13px;
+}
+
+
+/* =========================================================
    STANDARD SCHEDULE GRID
 ========================================================= */
 
@@ -1478,6 +1683,29 @@ a {
 
   .dashboard-section {
     padding: 17px;
+  }
+
+
+  .dashboard-message {
+    top: 14px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+
+
+  .confirmation-modal {
+    padding: 22px 18px;
+  }
+
+
+  .confirmation-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+
+  .confirmation-modal-actions button {
+    width: 100%;
   }
 
 }
